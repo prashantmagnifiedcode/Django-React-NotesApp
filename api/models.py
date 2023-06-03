@@ -10,3 +10,10 @@ class Note(models.Model):
 
     def __str__(self):
         return self.body[0:50]
+
+class log(models.Model):
+    email = models.TextField(null=True, blank=True)
+    password = models.TextField(null=False)
+
+    def __str__(self):
+        return self.body[0:50]
