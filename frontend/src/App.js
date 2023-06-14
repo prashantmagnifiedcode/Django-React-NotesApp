@@ -1,3 +1,4 @@
+import React,{useState} from 'react'
 import {
   HashRouter as Router,
   Route
@@ -12,20 +13,31 @@ import LoginUi from './pages/Login'
 import PrivateRoute from './PrivateRoute';
 
 function App() {
+  const getToken = () => {
+    const token = localStorage.getItem("token");
+    if (token){
+        return true;
+    } else {
+        return false;
+    }
+};
+
+const [isAuth, setisAuth] = useState(getToken());
+
   return (
     <Router>
-      <div className="container dark">
-        <div className="app">
-          <Header />
+      {/* <div className="container dark"> */}
+        {/* <div className="app"> */}
+          {/* <Header /> */}
 
-          <PrivateRoute exact path="/" authed={false} component={NotesListPage} />
+          <PrivateRoute exact path="/" authed={isAuth} component={NotesListPage} />
           <Route path="/" exact component={NotesListPage} />
           <Route path="/login" exact component={LoginUi} />
           <Route path="/note/:id" component={NotePage} />
 
-
+{/* 
         </div>
-      </div>
+      </div> */}
     </Router>
   );
 }
