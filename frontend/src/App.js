@@ -9,15 +9,21 @@ import Header from './components/Header'
 import NotesListPage from './pages/NotesListPage'
 import NotePage from './pages/NotePage'
 import LoginUi from './pages/Login'
+import PrivateRoute from './PrivateRoute';
+
 function App() {
   return (
     <Router>
       <div className="container dark">
         <div className="app">
           <Header />
+
+          <PrivateRoute exact path="/" authed={false} component={NotesListPage} />
           <Route path="/" exact component={NotesListPage} />
           <Route path="/login" exact component={LoginUi} />
           <Route path="/note/:id" component={NotePage} />
+
+
         </div>
       </div>
     </Router>
