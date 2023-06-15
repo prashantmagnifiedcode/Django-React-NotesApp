@@ -14,7 +14,8 @@ function LoginUi() {
         let value=e.target.value;
         setlog({...log,[name]:value})
     }
-    const registerUser = async() => {
+    const registerUser = async(e) => {
+      e.preventDefault()
       //Headers
       const config = {
           headers : {
@@ -37,6 +38,33 @@ function LoginUi() {
       return true;
   };
   
+  const logsubmit = (e)=> {
+    e.preventDefault();
+     //Headers
+     const config = {
+      headers : {
+          'Content-Type' : 'application/json',
+      }
+  };
+  //Request body
+  const body = JSON.stringify({ username:log.username, password:log.password });
+  const promise = axios.post('api/authy/login', body, config);
+  const dataPromise = promise.then((response) => response.data.token);
+ 
+  dataPromise.then(response =>{
+        const auth_token = response;
+        // setAxiosAuthToken(auth_token);
+        // setToken(auth_token);
+        // getCurrentUser();
+        // setisAuth(true);
+        // history.push("/");
+
+    })
+    .catch(error => {
+        // unsetCurrentUser();
+        window.alert("Login Error " + error);
+    });
+};
 
   return (
     <div class="container">
@@ -44,7 +72,7 @@ function LoginUi() {
       <div class="signin-signup">
         {
           Register?
-        <form action="#" class="sign-in-form">
+        <form action="#" class="sign-in-form" onSubmit={logsubmit}>
           <h2 class="title" >Sign in</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -71,7 +99,7 @@ function LoginUi() {
             </a>
           </div>
         </form>:
-        <form action="#" class="sign-up-form">
+        <form action="#" class="sign-up-form" onSubmit={registerUser}>
           <h2 class="title">Sign up</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -87,9 +115,9 @@ function LoginUi() {
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="password" placeholder="confirmPassword" name='password' value={log.password_two} onChange={handlechange}/>
+            <input type="password" placeholder="confirmPassword" name='password_two' value={log.password_two} onChange={handlechange}/>
           </div>
-          <input type="submit" class="btn" value="Sign up" onClick={registerUser} />
+          <input type="submit" class="btn" value="Sign up"  />
           <p class="social-text" onc>Or Sign up with social platforms</p>
           <div class="social-media">
             <a href="#" class="social-icon">

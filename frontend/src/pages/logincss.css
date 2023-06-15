@@ -52,7 +52,7 @@ form {
 }
 
 form.sign-up-form {
-  opacity: 0;
+  /* opacity: 0; */
   z-index: 1;
 }
 

@@ -1,33 +1,42 @@
-from django.http import response
-from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .serializers import logSerializer,SignupSerializer
+#Django User
+from django.contrib.auth import login
+
+#Authy app
+from api.serializers import SignupSerializer
+
+#Knox app
 from knox.models import AuthToken
+from knox.views import LoginView as KnoxLoginView
+
+#Django REst
+from rest_framework import permissions, generics
 from rest_framework.response import Response
-from rest_framework import status
-
-# Create your views here.
-
-@api_view([ 'POST'])
-def dologin(request):
-    data = request.data
-    print(data)
-    serializer = logSerializer(data, many=False)
-    print(serializer)
-    return Response(serializer.data)
+from rest_framework import status 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 @api_view(['POST'])
+@permission_classes([permissions.AllowAny])
 def SignupAPI(request):
     if request.method == 'POST':
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             created, token = AuthToken.objects.create(user)
-            print(created,token)
             return Response({
                 'user': serializer.data,
                 'status': status.HTTP_201_CREATED,
                 'token': token
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)
+
